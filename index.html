@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="filters">
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Search tasks..." oninput="searchTasks()">
+        </div>
+        <select id="priority-filter" onchange="searchTasks()">
+            <option value="">All Priorities</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+        </select>
+    </div>
+
+    <div class="board" id="task-board"></div>
+
+    <div class="add-task-container">
+        <div class="add-task-button" onclick="toggleAddForm()">
+            <span>➕</span>
+            <span>Add Task</span>
+        </div>
+    </div>
+
+    <div class="modal" id="add-modal">
+        <div class="modal-content">
+            <h2>Create New Task</h2>
+            <div class="form-group">
+                <label>Title:</label>
+                <input type="text" id="new-title">
+            </div>
+            <div class="form-group">
+                <label>Description:</label>
+                <textarea id="new-description"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Due Date:</label>
+                <input type="date" id="new-due-date">
+            </div>
+            <div class="form-group">
+                <label>Priority:</label>
+                <select id="new-priority">
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                </select>
+            </div>
+            <div class="buttons">
+                <button onclick="addNewTask()" style="background-color: #2ecc71;">Add Task</button>
+                <button onclick="toggleAddForm()" style="background-color: #95a5a6;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="edit-modal">
+        <div class="modal-content">
+            <h2>Edit Task</h2>
+            <div class="form-group">
+                <label>Title:</label>
+                <input type="text" id="edit-title">
+            </div>
+            <div class="form-group">
+                <label>Description:</label>
+                <textarea id="edit-description"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Due Date:</label>
+                <input type="date" id="edit-due-date">
+            </div>
+            <div class="form-group">
+                <label>Priority:</label>
+                <select id="edit-priority">
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Status:</label>
+                <select id="edit-status">
+                    <option value="To do">To do</option>
+                    <option value="In progress">In progress</option>
+                    <option value="Closed">Closed</option>
+                    <option value="Frozen">Frozen</option>
+                </select>
+            </div>
+            <div class="buttons">
+                <button onclick="saveEditedTask()" style="background-color: #2ecc71;">Save Changes</button>
+                <button onclick="closeEditModal()" style="background-color: #95a5a6;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
