@@ -26,34 +26,41 @@ function renderBoard(filteredTasks = allTasks) {
     board.innerHTML = '';
     ['To do', 'In progress', 'Closed', 'Frozen'].forEach(status => {
         const column = document.createElement('div');
-        column.className = 'column';
-        column.innerHTML = `<h2>${status}</h2>`;
+        column.className = 'bg-white rounded-xl p-4 shadow-task min-w-[280px]'; 
+        column.innerHTML = `<h2 class="text-xl font-semibold mb-4 pb-2 border-b-2 border-primary-blue text-center">${status}</h2>`;
         filteredTasks
             .filter(task => task.status === status)
             .forEach(task => column.appendChild(createTaskElement(task)));
         board.appendChild(column);
     });
 }
-
 function createTaskElement(task) {
     const element = document.createElement('div');
-    element.className = 'task';
+    element.className = 'bg-task-bg rounded-lg p-4 shadow-task hover:-translate-y-0.5 transition-transform mb-4';
     element.innerHTML = `
-        <div class="task-title">${task.title}</div>
-        <div class="date">Due: ${formatDate(task.dueDate)}</div>
-        <div class="priority-tag priority-${task.priority}">${task.priority}</div>
-        <div class="buttons">
-            <button class="delete-btn" onclick="deleteTask('${task.id}')">Delete</button>
-            <button class="edit-btn" onclick="openEditModal('${task.id}')">Edit</button>
-            ${['To do', 'In progress', 'Closed', 'Frozen']
-                .filter(s => s !== task.status)
-                .map(s => `<button class="move-btn" onclick="moveTask('${task.id}', '${s}')">Move to ${s}</button>`)
-                .join('')}
+        <div class="font-semibold mb-2">${task.title}</div>
+        <div class="text-primary-gray text-sm mb-2">Due: ${formatDate(task.dueDate)}</div>
+        <div class="inline-block px-3 py-1 rounded-full text-sm border ${
+            task.priority === 'high' ? 'bg-task-high-bg text-priority-high border-red-200' :
+            task.priority === 'medium' ? 'bg-task-medium-bg text-priority-medium border-orange-200' :
+            'bg-task-low-bg text-priority-low border-green-200'
+        }">${task.priority}</div>
+        <div class="flex flex-col md:flex-row gap-2 mt-4 flex-wrap">
+            <button onclick="deleteTask('${task.id}')" class="bg-primary-red text-white px-3 py-1.5 rounded text-sm hover:opacity-80 md:order-1">Delete</button>
+            <button onclick="openEditModal('${task.id}')" class="bg-primary-blue text-white px-3 py-1.5 rounded text-sm hover:opacity-80 md:order-2">Edit</button>
+            ${['In progress', 'Closed', 'Frozen']
+                .map(s => `
+                    <button 
+                        onclick="moveTask('${task.id}', '${s}')" 
+                        class="bg-primary-green text-white px-3 py-1.5 rounded text-sm hover:opacity-80 flex-1 min-w-[120px] text-center md:order-last"
+                    >
+                        Move to ${s}
+                    </button>
+                `).join('')}
         </div>
     `;
     return element;
 }
-
 function formatDate(dateString) {
     if (!dateString) return 'No date';
     const date = new Date(dateString);
@@ -153,6 +160,8 @@ async function saveEditedTask() {
 
 function closeEditModal() {
     document.getElementById('edit-modal').style.display = 'none';
+    document.getElementById('edit-modal').classList.add('hidden');
+    document.getElementById('edit-modal').classList.remove('flex');
     currentEditingTask = null;
 }
 
@@ -205,6 +214,9 @@ function searchTasks() {
 function toggleAddForm() {
     const modal = document.getElementById('add-modal');
     modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+    modal.classList.toggle('hidden');
+    modal.classList.toggle('flex');
+
     clearAddForm();
 }
 

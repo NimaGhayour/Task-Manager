@@ -4,100 +4,196 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif']
+                    },
+                    colors: {
+                        'primary-blue': '#3498db',
+                        'primary-green': '#2ecc71',
+                        'primary-red': '#e74c3b',
+                        'primary-gray': '#95a5a6',
+                        'priority-high': '#c72828',
+                        'priority-medium': '#ec6a00',
+                        'priority-low': '#2e8132',
+                        'task-high-bg': '#FFEBEE',
+                        'task-medium-bg': '#FFF3E0',
+                        'task-bg': '#f8fafc',
+                        'task-low-bg': '#E8F5E9'
+                    },
+                    boxShadow: {
+                         'task': '0 2px 5px rgba(0, 0, 0, 0.05)',
+                         'modal': '0 4px 10px rgba(0, 0, 0, 0.2)'
+}
+                }
+            }
+        }
+    </script>
 </head>
-<body>
-    <div class="filters">
-        <div class="search-bar">
-            <input type="text" id="search-input" placeholder="Search tasks..." oninput="searchTasks()">
+
+<body class="font-poppins bg-[#eef3fb] min-h-screen p-5">
+    <div class="flex flex-col items-center w-full gap-4 max-w-[1200px] mx-auto">
+        <div class="w-full flex flex-col md:flex-row gap-4 mb-6 max-w-[600px]">
+            <input 
+                type="text" 
+                id="search-input"
+                placeholder="Search tasks..."
+                oninput="searchTasks()"
+                class="w-full px-5 py-3 rounded-full border-2 border-[#349adf] focus:outline-none focus:ring-2 focus:ring-blue-300"
+            >
+            <select 
+                id="priority-filter" 
+                onchange="searchTasks()"
+                class="px-5 py-3 rounded-full border-2 border-primary-blue bg-white focus:outline-none focus:ring-2 focus:ring-blue-300"
+            >
+                <option value="">All Priorities</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+            </select>
         </div>
-        <select id="priority-filter" onchange="searchTasks()">
-            <option value="">All Priorities</option>
-            <option value="high">High</option>
-            <option value="medium">Medium</option>
-            <option value="low">Low</option>
-        </select>
-    </div>
 
-    <div class="board" id="task-board"></div>
+        <div id="task-board" class="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"></div>
 
-    <div class="add-task-container">
-        <div class="add-task-button" onclick="toggleAddForm()">
-            <span>➕</span>
-            <span>Add Task</span>
+        <div class="fixed bottom-8 right-8 z-[999]">
+            <div 
+                onclick="toggleAddForm()"
+                class="flex items-center gap-2 bg-primary-blue text-white px-6 py-3 rounded-full shadow-lg cursor-pointer hover:scale-105 transition-transform"
+            >
+                <span>➕</span>
+                <span>Add Task</span>
+            </div>
         </div>
-    </div>
 
-    <div class="modal" id="add-modal">
-        <div class="modal-content">
-            <h2>Create New Task</h2>
-            <div class="form-group">
-                <label>Title:</label>
-                <input type="text" id="new-title">
+        <div id="add-modal" class="hidden fixed inset-0 bg-black/50 z-[1000] items-center justify-center">
+            <div class="bg-white rounded-xl p-6 w-full max-w-md mx-4">
+                <h2 class="text-2xl font-semibold mb-4">Create New Task</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block font-medium mb-1">Title:</label>
+                        <input 
+                            type="text" 
+                            id="new-title"
+                            class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-blue"
+                        >
+                    </div>
+                    <div>
+                        <label class="block font-medium mb-1">Description:</label>
+                        <textarea 
+                            id="new-description"
+                            class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-blue h-24"
+                        ></textarea>
+                    </div>
+                    <div>
+                        <label class="block font-medium mb-1">Due Date:</label>
+                        <input 
+                            type="date" 
+                            id="new-due-date"
+                            class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-blue"
+                        >
+                    </div>
+                    <div>
+                        <label class="block font-medium mb-1">Priority:</label>
+                        <select 
+                            id="new-priority"
+                            class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-blue"
+                        >
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex gap-2 mt-6">
+                    <button 
+                        onclick="addNewTask()" 
+                        class="bg-primary-green text-white px-4 py-2 rounded-lg hover:opacity-80"
+                    >
+                        Add Task
+                    </button>
+                    <button 
+                        onclick="toggleAddForm()" 
+                        class="bg-primary-gray text-white px-4 py-2 rounded-lg hover:opacity-80"
+                    >
+                        Cancel
+                    </button>
+                </div>
             </div>
-            <div class="form-group">
-                <label>Description:</label>
-                <textarea id="new-description"></textarea>
+        </div>
+
+        <div id="edit-modal" class="hidden fixed inset-0 bg-black/50 z-[1000] items-center justify-center">
+    <div class="bg-white rounded-xl p-6 w-full max-w-md mx-4">
+        <h2 class="text-2xl font-semibold mb-4">Edit Task</h2>
+        <div class="space-y-4">
+            <div>
+                <label class="block font-medium mb-1">Title:</label>
+                <input 
+                    type="text" 
+                    id="edit-title"
+                    class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-blue"
+                >
             </div>
-            <div class="form-group">
-                <label>Due Date:</label>
-                <input type="date" id="new-due-date">
+            <div>
+                <label class="block font-medium mb-1">Description:</label>
+                <textarea 
+                    id="edit-description"
+                    class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-blue h-24"
+                ></textarea>
             </div>
-            <div class="form-group">
-                <label>Priority:</label>
-                <select id="new-priority">
+            <div>
+                <label class="block font-medium mb-1">Due Date:</label>
+                <input 
+                    type="date" 
+                    id="edit-due-date"
+                    class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-blue"
+                >
+            </div>
+            <div>
+                <label class="block font-medium mb-1">Priority:</label>
+                <select 
+                    id="edit-priority"
+                    class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-blue"
+                >
                     <option value="high">High</option>
                     <option value="medium">Medium</option>
                     <option value="low">Low</option>
                 </select>
             </div>
-            <div class="buttons">
-                <button onclick="addNewTask()" style="background-color: #2ecc71;">Add Task</button>
-                <button onclick="toggleAddForm()" style="background-color: #95a5a6;">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal" id="edit-modal">
-        <div class="modal-content">
-            <h2>Edit Task</h2>
-            <div class="form-group">
-                <label>Title:</label>
-                <input type="text" id="edit-title">
-            </div>
-            <div class="form-group">
-                <label>Description:</label>
-                <textarea id="edit-description"></textarea>
-            </div>
-            <div class="form-group">
-                <label>Due Date:</label>
-                <input type="date" id="edit-due-date">
-            </div>
-            <div class="form-group">
-                <label>Priority:</label>
-                <select id="edit-priority">
-                    <option value="high">High</option>
-                    <option value="medium">Medium</option>
-                    <option value="low">Low</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Status:</label>
-                <select id="edit-status">
+            <div>
+                <label class="block font-medium mb-1">Status:</label>
+                <select 
+                    id="edit-status"
+                    class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-blue"
+                >
                     <option value="To do">To do</option>
                     <option value="In progress">In progress</option>
                     <option value="Closed">Closed</option>
                     <option value="Frozen">Frozen</option>
                 </select>
             </div>
-            <div class="buttons">
-                <button onclick="saveEditedTask()" style="background-color: #2ecc71;">Save Changes</button>
-                <button onclick="closeEditModal()" style="background-color: #95a5a6;">Cancel</button>
-            </div>
+        </div>
+        <div class="flex gap-2 mt-6">
+            <button 
+                onclick="saveEditedTask()" 
+                class="bg-primary-green text-white px-4 py-2 rounded-lg hover:opacity-80"
+            >
+                Save Changes
+            </button>
+            <button 
+                onclick="closeEditModal()" 
+                class="bg-primary-gray text-white px-4 py-2 rounded-lg hover:opacity-80"
+            >
+                Cancel
+            </button>
         </div>
     </div>
-
+    </div>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
