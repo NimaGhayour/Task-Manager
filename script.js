@@ -48,7 +48,8 @@ function createTaskElement(task) {
         <div class="flex flex-col md:flex-row gap-2 mt-4 flex-wrap">
             <button onclick="deleteTask('${task.id}')" class="bg-primary-red text-white px-3 py-1.5 rounded text-sm hover:opacity-80 md:order-1">Delete</button>
             <button onclick="openEditModal('${task.id}')" class="bg-primary-blue text-white px-3 py-1.5 rounded text-sm hover:opacity-80 md:order-2">Edit</button>
-            ${['In progress', 'Closed', 'Frozen']
+            ${['To do', 'In progress', 'Closed', 'Frozen']
+                .filter(s => s !== task.status)
                 .map(s => `
                     <button 
                         onclick="moveTask('${task.id}', '${s}')" 
